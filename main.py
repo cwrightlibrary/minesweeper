@@ -1,46 +1,47 @@
-import tkinter as tk
+import pygame
 
-class App(tk.Tk):
+class Minesweeper():
     def __init__(self):
-        super().__init__()
-        self.title("minesweeper")
-        self.geometry("470x620")
+        pygame.init()
+        self.WIDTH, self.HEIGHT = 320, 400
+        self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
+        pygame.display.set_caption("Minesweeper")
+        self.clock = pygame.time.Clock()
+        self.running = True
 
-        self.center_window()
-        self.focus_force()
+        self.game_loop()
 
-        self.grid_rowconfigure((0, 1), weight=1)
-        self.grid_columnconfigure(0, weight=1)
+    def game_loop(self):
+        while self.running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.running = False
 
-        self.header = tk.Frame(self, width=450, height=250, background="red")
-        self.header.grid(row=0, column=0, pady=(10, 5))
-        self.header.grid_rowconfigure(0, weight=1)
-        self.header.grid_columnconfigure((0, 1, 2), weight=1)
+            self.game_logic()
 
-        self.game_area = tk.Frame(self, width=450, height=450)
-        self.game_area.grid(row=1, column=0, padx=10, pady=(5, 10))
+            pygame.display.flip()
+            self.clock.tick(60)
 
-        self.buttons = []
-        self.add_buttons()
+    pygame.quit()
 
-    def center_window(self):
-        self.update_idletasks()
-        width, height = self.winfo_width(), self.winfo_height()
-        scr_width, scr_height = self.winfo_screenwidth(), self.winfo_screenheight()
-        x, y = (scr_width - width) // 2, (scr_height - height) // 2
-        self.geometry(f"{width}x{height}+{x}+{y}")
-    
-    def add_buttons(self):
-        for i in range(10):
-            for j in range(10):
-                btn = tk.Button(self.game_area, text="", relief="raised", width=20, height=3, borderwidth=5)
-                btn.grid(row=i, column=j, sticky="nsew")
-                self.buttons.append(btn)
-        for i in range(10):
-            self.game_area.grid_rowconfigure(i, weight=1)
-            self.game_area.grid_columnconfigure(i, weight=1)
+    def game_logic(self):
+        WHITE = (255, 255, 255)
+        GREY_LIGHT = (192, 192, 192)
+        GREY_DARK = (128, 128, 128)
+        BLACK = (0, 0, 0)
+        RED_LIGHT = (255, 0, 0)
+        RED_DARK = (128, 0, 0)
+        YELLOW = (255, 255, 0)
 
+        self.screen.fill(GREY_LIGHT)
+
+        hdr_x, hdr_y, hdr_w, hdr_h = 10, 8, 300, 74
+
+        # pygame.draw.rect(self.screen, GREY_DARK, (hdr_x, hdr_y, hdr_w, hdr_h))
+        pygame.draw.rect(self.screen, GREY_DARK, (hdr_x, hdr_y, hdr_w - 2, 4))
+        pygame.draw.rect(self.screen, GREY_DARK, (hdr_x, hdr_y, 4, hdr_h + 2))
+        pygame.draw.rect(self.screen, WHITE, (hdr_x + 2, hdr_y + hdr_h, hdr_w - 2, 4))
+        pygame.draw.rect(self.screen, WHITE, (hdr_x + hdr_w - 4, hdr_y + 2, 4, hdr_h - 2))
 
 if __name__ == "__main__":
-    app = App()
-    app.mainloop()
+    minesweeper = Minesweeper()
